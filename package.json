@@ -1,0 +1,26 @@
+{
+  "name": "task-2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm run --parallel dev",
+    "build": "pnpm run --parallel build",
+    "build:server": "pnpm -F server build",
+    "build:client": "pnpm -F client build",
+    "start:server": "pnpm -F server start",
+    "start:client": "pnpm -F client start",
+    "clean": "git clean -xdf node_modules",
+    "db:generate": "pnpm -F server db:generate",
+    "db:push": "pnpm -F server db:push",
+    "db:migrate": "pnpm -F server db:migrate",
+    "db:studio": "pnpm -F server db:studio",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^9.0.11"
+  }
+}

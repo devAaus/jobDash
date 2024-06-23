@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// prisma/schema.prisma
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+model Users {
+  id                                     Int                     @id @default(autoincrement())
+  createdAt                              DateTime                @default(now())
+  updatedAt                              DateTime                @updatedAt
+  email                                  String                  @unique
+  username                               String                  @unique
+  hash                                   String
+  role                                   Role                    @default(CANDIDATE)
+  hashedRt                               String?
+  jobs                                   Job[]
+  candidate                              Candidate?
+  selection                              Selection[]
+  recruiter                              Recruiter?
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  RECRUITER
+  CANDIDATE
+}
+
+model Candidate{
+  id                  Int @id @default(autoincrement())
+  firstName           String
+  lastName            String
+  email               String
+  skills              String
+  experience          String
+  education           String
+  website             String
+  userId              Int     @unique
+  user                Users   @relation(fields: [userId], references: [id])
+}
+
+model Recruiter{
+  id                  Int @id @default(autoincrement())
+  name                String
+  email               String
+  location            String
+  description         String
+  website             String
+  userId              Int     @unique
+  user                Users   @relation(fields: [userId], references: [id])
+}
+
+enum JobLevel {
+  ENTRY
+  JUNIOR
+  MID
+  SENIOR
+}
+
+enum Location {
+  REMOTE
+  ONSITE
+  HYBRID
+}
+
+
+model Job {
+  id                  Int      @id @default(autoincrement())
+  title               String
+  desc                String
+  compName            String
+  compAddress         String
+  location            Location
+  level               JobLevel
+  experience          String
+  salary              String
+  skills              String
+  expiryDate          String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  userId              Int      
+  user                Users    @relation(fields: [userId], references: [id])
+  selection           Selection[]
+}
+
+
+enum SelectionStatus {
+  APPLIED
+  SELECTED
+  REJECTED
+}
+
+model Selection {
+  id           Int               @id @default(autoincrement())
+  userId       Int
+  jobId        Int
+  status       SelectionStatus
+  user         Users             @relation(fields: [userId], references: [id])
+  job          Job               @relation(fields: [jobId], references: [id])
+
+  @@unique([userId, jobId])
+}
