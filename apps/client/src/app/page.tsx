@@ -1,6 +1,5 @@
 
 import JobSection from "@/components/home/JobSection";
-import Search from "@/components/Search";
 import { getJob } from "@/services/axios.service";
 
 export default async function Home() {
@@ -17,12 +16,9 @@ export default async function Home() {
             We&apos;ve helped over 2,500 freshers to get into the most popular jobs.
           </p>
         </div>
-
-        <Search />
       </section>
 
       <section className="py-12">
-        <h1 className="text-3xl font-bold text-center">Get Your Dream Job</h1>
         <JobSection jobs={jobs} />
       </section>
 

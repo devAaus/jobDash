@@ -1,40 +1,31 @@
-"use client"
+"use client";
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { PlaceholdersAndVanishInput } from './ui/placeholders-and-vanish-input';
+import { Input } from './ui/input';
 
-const Search = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const placeholders = [
-        "Software Engineer",
-        "UI/UX Designer",
-        "Data Scientist",
-        "DevOps Engineer",
-        "Full Stack Developer",
-        "Flutter Developer",
-    ];
+interface SearchProps {
+    onSearch: (searchTerm: string) => void;
+}
 
-    const router = useRouter();
+const Search = ({ onSearch }: SearchProps) => {
+    const [searchTerm, setSearchTerm] = useState<string>('');
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
-    };
-
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        router.push(`/search-results?title=${encodeURIComponent(searchTerm)}`);
+    const handleSearch = (event: React.FormEvent) => {
+        event.preventDefault();
+        onSearch(searchTerm.trim());
     };
 
     return (
-        <div className='w-full px-6 md:px-2'>
-            <PlaceholdersAndVanishInput
-                placeholders={placeholders}
-                onChange={handleChange}
-                onSubmit={onSubmit}
+        <form onSubmit={handleSearch} className="flex items-center">
+            <Input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search jobs..."
+                className="border rounded-2xl px-6 text-base font-semibold md:w-[500px]"
             />
-        </div>
+        </form>
     );
-}
+};
 
 export default Search;
