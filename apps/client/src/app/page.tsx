@@ -14,7 +14,7 @@ export default async function Home() {
             Join the most popular jobs and companies.
           </h3>
           <p className="mt-4 text-lg text-center">
-            We&apos;ve helped over 2,500 freshers to get into the most popular internships.
+            We&apos;ve helped over 2,500 freshers to get into the most popular jobs.
           </p>
         </div>
 

@@ -6,7 +6,12 @@ const SingleJobPage = async ({ params }: { params: { id: number } }) => {
     const jobData = await getJobById(id);
 
     return (
-        <JobdetailsSection data={jobData} />
+        <>
+            {jobData
+                ? <JobdetailsSection data={jobData} />
+                : <div>Job has been expired or detail not found</div>
+            }
+        </>
     );
 };
 

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm run --parallel dev",
+    "dev:client": "pnpm -F client dev",
     "build": "pnpm run --parallel build",
     "build:server": "pnpm -F server build",
     "build:client": "pnpm -F client build",

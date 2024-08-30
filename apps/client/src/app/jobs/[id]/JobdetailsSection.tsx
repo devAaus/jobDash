@@ -52,7 +52,7 @@ const JobdetailsSection = ({ data }: { data: Job }) => {
             <Card className="hover:shadow-none capitalize">
                 <CardHeader className='space-y-1'>
                     <h3>About Company</h3>
-                    <CardTitle>{data.compName}</CardTitle>
+                    <CardTitle>{data?.compName}</CardTitle>
                     <div className='flex flex-row items-center gap-1'>
                         <IoLocationOutline />
                         <p className='text-sm text-gray-400'>{data.compAddress}</p>
@@ -60,7 +60,7 @@ const JobdetailsSection = ({ data }: { data: Job }) => {
                 </CardHeader>
                 <CardContent>
                     <CardDescription>
-                        {data.compName} provides innovative technology solutions for businesses of all sizes, specializing in cloud computing, cybersecurity, and IT consulting
+                        {data?.compName} provides innovative technology solutions for businesses of all sizes, specializing in cloud computing, cybersecurity, and IT consulting
                     </CardDescription>
                 </CardContent>
             </Card>
