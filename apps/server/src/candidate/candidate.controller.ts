@@ -11,16 +11,12 @@ export class CandidateController {
 
   @Post()
   create(
-    @Body() createCandidateDto: CreateCandidateDto,
+    @Body() data: CreateCandidateDto,
     @GetCurrentUserId() userId: number
   ) {
-    return this.candidateService.create({ ...createCandidateDto, userId });
+    return this.candidateService.create(data, userId);
   }
 
-  @Get()
-  findAll() {
-    return this.candidateService.findAll();
-  }
 
   @Public()
   @Get(':id')
@@ -30,17 +26,15 @@ export class CandidateController {
 
   @UseGuards(AtGuard)
   @Get('/user/profile')
-  findByUserId(@GetCurrentUserId() userId: number) {
-    return this.candidateService.findByUserId(userId);
+  userProfile(@GetCurrentUserId() userId: number) {
+    return this.candidateService.userProfile(userId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCandidateDto: UpdateCandidateDto) {
-    return this.candidateService.update(+id, updateCandidateDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.candidateService.remove(+id);
+  @Patch()
+  update(
+    @GetCurrentUserId() userId: number,
+    @Body() updateCandidateDto: UpdateCandidateDto
+  ) {
+    return this.candidateService.update(userId, updateCandidateDto);
   }
 }

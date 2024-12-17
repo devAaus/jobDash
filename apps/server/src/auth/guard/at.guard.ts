@@ -1,14 +1,14 @@
-import { ExecutionContext, Injectable } from '@nestjs/common'
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
-import { log } from 'console'
 
 @Injectable()
 export class AtGuard extends AuthGuard('jwt') {
 	constructor(private reflector: Reflector) {
 		super()
 	}
-	canActivate(context: ExecutionContext): any {
+	async canActivate(context: ExecutionContext): Promise<boolean> {
+		// check if the route is public
 		const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
 			context.getHandler(),
 			context.getClass(),
@@ -16,8 +16,12 @@ export class AtGuard extends AuthGuard('jwt') {
 		if (isPublic) {
 			return true
 		}
-		log(typeof super.canActivate(context))
-		log(typeof isPublic)
-		return super.canActivate(context) // this will execute jwt strategy
+		try {
+			const result = await super.canActivate(context);
+			return result as boolean;
+		} catch (error) {
+			console.error('JWT authentication failed:', error);
+			throw new UnauthorizedException('Unauthorized access');
+		} // this will execute jwt strategy
 	}
 }

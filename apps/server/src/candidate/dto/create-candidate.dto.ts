@@ -1,4 +1,4 @@
-import { IsString } from "class-validator";
+import { IsOptional, IsString } from "class-validator";
 
 export class CreateCandidateDto {
     @IsString()
@@ -6,9 +6,6 @@ export class CreateCandidateDto {
 
     @IsString()
     lastName: string;
-
-    @IsString()
-    email: string;
 
     @IsString()
     skills: string;
@@ -19,6 +16,11 @@ export class CreateCandidateDto {
     @IsString()
     education: string;
 
+    @IsOptional()
     @IsString()
-    website: string;
+    portfolio: string;
+
+    @IsOptional()
+    @IsString()
+    github: string;
 }

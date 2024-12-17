@@ -35,11 +35,11 @@ model Candidate{
   id                  Int @id @default(autoincrement())
   firstName           String
   lastName            String
-  email               String
   skills              String
   experience          String
   education           String
-  website             String
+  portfolio           String?
+  github              String?
   userId              Int     @unique
   user                Users   @relation(fields: [userId], references: [id])
 }
