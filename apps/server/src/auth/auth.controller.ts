@@ -4,37 +4,40 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
+  Res,
+  UnauthorizedException,
   UseGuards,
-} from '@nestjs/common'
-import { AuthService } from './auth.service'
-import { AuthDto, RegisterDto } from './dto'
-import { GetCurrentUser, GetCurrentUserId, Public } from './decorator'
-import { RtGuard } from './guard'
-import { Tokens } from './types'
-import { AuthEntities } from './entities'
+} from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { AuthDto, RegisterDto } from './dto';
+import { GetCurrentUser, GetCurrentUserId, Public } from './decorator';
+import { RtGuard } from './guard';
+import { Response } from 'express';
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Public()
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
-  signup(@Body() dto: RegisterDto): Promise<AuthEntities> {
-    return this.authService.signup(dto)
+  async signup(@Body() dto: RegisterDto, @Res() res: Response) {
+    return await this.authService.signup(dto, res);
   }
 
   @Public()
   @Post('signin')
   @HttpCode(HttpStatus.OK)
-  signin(@Body() dto: AuthDto): Promise<AuthEntities> {
-    return this.authService.signin(dto)
+  async signin(@Body() dto: AuthDto, @Res() res: Response) {
+    return await this.authService.signin(dto, res);
   }
 
+  @Public()
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  async logout(@GetCurrentUserId() userId: number) {
-    return this.authService.logout(userId)
+  async logout(@Res() res: Response) {
+    return await this.authService.logout(res);
   }
 
   @Public()
@@ -43,8 +46,13 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async refreshToken(
     @GetCurrentUserId() userId: number,
-    @GetCurrentUser('refreshToken') refreshToken: string
-  ): Promise<Tokens> {
-    return this.authService.refreshToken(userId, refreshToken)
+    @GetCurrentUser('refreshToken') refreshToken: string,
+    @Res() res: Response
+  ) {
+    await this.authService.refreshToken(userId, refreshToken, res);
+    return res.send({
+      message: 'Token Refreshed',
+      success: true,
+    });
   }
 }

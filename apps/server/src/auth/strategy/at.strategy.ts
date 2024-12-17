@@ -8,7 +8,9 @@ import { JwtPayload } from '../types'
 export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(config: ConfigService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([(request) => {
+        return request?.cookies?.accessToken;
+      }]),
       secretOrKey: config.get('JWT_SECRET_KEY'),
     })
   }
