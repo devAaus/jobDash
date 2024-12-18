@@ -85,33 +85,34 @@ export class CandidateService {
 
 
   // Update candidate's profile
-  async update(id: string, updateCandidateDto: UpdateCandidateDto) {
+  async update(userId: string, updateCandidateDto: UpdateCandidateDto) {
     try {
       // Check if the candidate exists
       const existingCandidate = await this.prisma.candidate.findUnique({
-        where: { id },
+        where: { userId },
       });
 
       if (!existingCandidate) {
         return {
-          message: `Candidate with id ${id} not found.`,
+          message: `Candidate not found.`,
           success: false,
         };
       }
 
       // Perform the update
       const updatedCandidate = await this.prisma.candidate.update({
-        where: { id },
+        where: { userId },
+        include: { user: true },
         data: updateCandidateDto,
       });
 
       return {
         message: `Candidate updated successfully.`,
         success: true,
-        candidate: updatedCandidate,
+        candidate: this.candidateData(updatedCandidate),
       };
     } catch (error) {
-      console.error(`Error updating candidate with id ${id}:`, error);
+      console.error(`Error updating candidate`, error);
       throw new Error('Failed to update candidate');
     }
   }
@@ -126,9 +127,7 @@ export class CandidateService {
       education: data.education,
       portfolio: data.portfolio,
       github: data.github,
-      userEmail: data.user?.email,
-      userUsername: data.user?.username,
-      userRole: data.user?.role
+      email: data.user?.email
     };
   }
 }

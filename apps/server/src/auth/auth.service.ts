@@ -24,7 +24,7 @@ export class AuthService {
         where: {
           OR: [
             { email: dto.email },
-            { username: dto.userName },
+            { username: dto.username },
           ],
         },
       });
@@ -34,7 +34,7 @@ export class AuthService {
         if (existingUser.email === dto.email) {
           errors['email'] = 'Email already registered';
         }
-        if (existingUser.username === dto.userName) {
+        if (existingUser.username === dto.username) {
           errors['username'] = 'Username already registered';
         }
         throw new ForbiddenException(errors);
@@ -44,7 +44,7 @@ export class AuthService {
       const user = await this.prisma.users.create({
         data: {
           email: dto.email,
-          username: dto.userName,
+          username: dto.username,
           hash,
         },
       });
