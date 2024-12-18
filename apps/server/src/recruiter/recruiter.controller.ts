@@ -12,7 +12,7 @@ export class RecruiterController {
   @Post()
   async create(
     @Body() createRecruiterDto: CreateRecruiterDto,
-    @GetCurrentUserId() userId: number
+    @GetCurrentUserId() userId: string
   ) {
     return this.recruiterService.create({ ...createRecruiterDto, userId });
   }
@@ -24,23 +24,23 @@ export class RecruiterController {
 
   @Public()
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.recruiterService.findOne(+id);
+  findOne(@Param('id') id: string) {
+    return this.recruiterService.findOne(id);
   }
 
   @UseGuards(AtGuard)
   @Get('/user/profile')
-  findByUserId(@GetCurrentUserId() userId: number) {
+  findByUserId(@GetCurrentUserId() userId: string) {
     return this.recruiterService.findByUserId(userId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateRecruiterDto: UpdateRecruiterDto) {
-    return this.recruiterService.update(+id, updateRecruiterDto);
+  update(@Param('id') id: string, @Body() updateRecruiterDto: UpdateRecruiterDto) {
+    return this.recruiterService.update(id, updateRecruiterDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.recruiterService.remove(+id);
+    return this.recruiterService.remove(id);
   }
 }

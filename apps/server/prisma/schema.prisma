@@ -9,7 +9,7 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 model Users {
-  id                                     Int                     @id @default(autoincrement())
+  id                                     String                     @id @default(uuid())
   createdAt                              DateTime                @default(now())
   updatedAt                              DateTime                @updatedAt
   email                                  String                  @unique
@@ -19,7 +19,7 @@ model Users {
   hashedRt                               String?
   jobs                                   Job[]
   candidate                              Candidate?
-  selection                              Selection[]
+  
   recruiter                              Recruiter?
 
   @@map("users")
@@ -31,8 +31,8 @@ enum Role {
   CANDIDATE
 }
 
-model Candidate{
-  id                  Int @id @default(autoincrement())
+model Candidate {
+  id                  String    @id @default(uuid())
   firstName           String
   lastName            String
   skills              String
@@ -40,19 +40,20 @@ model Candidate{
   education           String
   portfolio           String?
   github              String?
-  userId              Int     @unique
-  user                Users   @relation(fields: [userId], references: [id])
+  selection           Selection[]
+  userId              String    @unique
+  user                Users     @relation(fields: [userId], references: [id])
 }
 
-model Recruiter{
-  id                  Int @id @default(autoincrement())
+model Recruiter {
+  id                  String    @id @default(uuid())
   name                String
   email               String
   location            String
   description         String
   website             String
-  userId              Int     @unique
-  user                Users   @relation(fields: [userId], references: [id])
+  userId              String    @unique
+  user                Users     @relation(fields: [userId], references: [id])
 }
 
 enum JobLevel {
@@ -70,7 +71,7 @@ enum Location {
 
 
 model Job {
-  id                  Int      @id @default(autoincrement())
+  id                  String    @id @default(uuid())
   title               String
   desc                String
   compName            String
@@ -81,10 +82,10 @@ model Job {
   salary              String
   skills              String
   expiryDate          String
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  userId              Int      
-  user                Users    @relation(fields: [userId], references: [id])
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  userId              String
+  user                Users     @relation(fields: [userId], references: [id])
   selection           Selection[]
 }
 
@@ -96,12 +97,12 @@ enum SelectionStatus {
 }
 
 model Selection {
-  id           Int               @id @default(autoincrement())
-  userId       Int
-  jobId        Int
+  id           String          @id @default(uuid())
+  candidateId  String
+  jobId        String
   status       SelectionStatus
-  user         Users             @relation(fields: [userId], references: [id])
-  job          Job               @relation(fields: [jobId], references: [id])
+  candidate    Candidate       @relation(fields: [candidateId], references: [id])
+  job          Job             @relation(fields: [jobId], references: [id])
 
-  @@unique([userId, jobId])
+  @@unique([candidateId, jobId])
 }

@@ -26,27 +26,27 @@ export class JobController {
 
   @Public()
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.jobService.findOne(+id);
+  findOne(@Param('id') id: string) {
+    return this.jobService.findOne(id);
   }
 
 
   @UseGuards(AtGuard)
   @Get('/user/jobs')
-  findByUserId(@GetCurrentUser() userId: number) {
+  findByUserId(@GetCurrentUser() userId: string) {
     return this.jobService.findByUserId(userId);
   }
 
   @UseGuards(AtGuard)
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateJobDto: UpdateJobDto) {
-    return this.jobService.update(+id, updateJobDto);
+  update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
+    return this.jobService.update(id, updateJobDto);
   }
 
   @UseGuards(AtGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.jobService.remove(+id);
+    return this.jobService.remove(id);
   }
 
   @Public()

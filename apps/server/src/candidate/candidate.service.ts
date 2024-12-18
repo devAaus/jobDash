@@ -8,7 +8,7 @@ export class CandidateService {
   constructor(private readonly prisma: PrismaService) { }
 
   // Create a new candidate profile
-  async create(data: CreateCandidateDto, userId: number) {
+  async create(data: CreateCandidateDto, userId: string) {
 
     try {
       // Check if a candidate profile already exists for this userId
@@ -47,7 +47,7 @@ export class CandidateService {
 
 
   // Fetch all candidates
-  async findOne(id: number) {
+  async findOne(id: string) {
     return await this.prisma.candidate.findUnique({
       where: {
         id
@@ -57,7 +57,7 @@ export class CandidateService {
 
 
   // Fetch user profile
-  async userProfile(userId: number) {
+  async userProfile(userId: string) {
     try {
       const profile = await this.prisma.candidate.findUnique({
         where: { userId },
@@ -85,7 +85,7 @@ export class CandidateService {
 
 
   // Update candidate's profile
-  async update(id: number, updateCandidateDto: UpdateCandidateDto) {
+  async update(id: string, updateCandidateDto: UpdateCandidateDto) {
     try {
       // Check if the candidate exists
       const existingCandidate = await this.prisma.candidate.findUnique({

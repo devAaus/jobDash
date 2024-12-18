@@ -9,13 +9,13 @@ import { AtGuard } from 'src/auth/guard';
 export class SelectionController {
   constructor(private readonly selectionService: SelectionService) { }
 
-  @Post()
-  create(
-    @Body() createSelectionDto: CreateSelectionDto,
-    @GetCurrentUserId() userId: number
-  ) {
-    return this.selectionService.create({ ...createSelectionDto, userId });
-  }
+  // @Post()
+  // create(
+  //   @Body() data: CreateSelectionDto,
+  //   @GetCurrentUserId() userId: string
+  // ) {
+  //   return this.selectionService.create(data, userId);
+  // }
 
   @Get()
   findAll() {
@@ -24,22 +24,22 @@ export class SelectionController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.selectionService.findOne(+id);
+    return this.selectionService.findOne(id);
   }
 
-  @UseGuards(AtGuard)
-  @Get('/user/selection')
-  findByUserId(@GetCurrentUserId() userId: number) {
-    return this.selectionService.findByUserId(userId);
-  }
+  // @UseGuards(AtGuard)
+  // @Get('/user/selection')
+  // findByUserId(@GetCurrentUserId() userId: string) {
+  //   return this.selectionService.findByUserId(userId);
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSelectionDto: UpdateSelectionDto) {
-    return this.selectionService.update(+id, updateSelectionDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateSelectionDto: UpdateSelectionDto) {
+  //   return this.selectionService.update(id, updateSelectionDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.selectionService.remove(+id);
+    return this.selectionService.remove(id);
   }
 }

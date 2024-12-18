@@ -12,7 +12,7 @@ export class CandidateController {
   @Post()
   create(
     @Body() data: CreateCandidateDto,
-    @GetCurrentUserId() userId: number
+    @GetCurrentUserId() userId: string
   ) {
     return this.candidateService.create(data, userId);
   }
@@ -21,18 +21,18 @@ export class CandidateController {
   @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.candidateService.findOne(+id);
+    return this.candidateService.findOne(id);
   }
 
   @UseGuards(AtGuard)
   @Get('/user/profile')
-  userProfile(@GetCurrentUserId() userId: number) {
+  userProfile(@GetCurrentUserId() userId: string) {
     return this.candidateService.userProfile(userId);
   }
 
   @Patch()
   update(
-    @GetCurrentUserId() userId: number,
+    @GetCurrentUserId() userId: string,
     @Body() updateCandidateDto: UpdateCandidateDto
   ) {
     return this.candidateService.update(userId, updateCandidateDto);

@@ -9,7 +9,7 @@ export class JobService {
 
   async create(data: CreateJobDto, user: any) {
 
-    // // Check if the user has the 'recruiter' role
+    // Check if the user has the 'recruiter' role
     if (user.role !== 'RECRUITER') {
       return {
         message: 'You do not have permission to create a job.',
@@ -43,26 +43,26 @@ export class JobService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return await this.prisma.job.findUnique({
       where: { id }
     })
   }
 
-  async findByUserId(userId: number) {
+  async findByUserId(userId: string) {
     return await this.prisma.job.findMany({
       where: { userId }
     });
   }
 
-  async update(id: number, updateJobDto: UpdateJobDto) {
+  async update(id: string, updateJobDto: UpdateJobDto) {
     return await this.prisma.job.update({
       where: { id },
       data: updateJobDto
     });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return await this.prisma.job.delete({
       where: { id }
     });

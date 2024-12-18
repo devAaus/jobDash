@@ -66,7 +66,7 @@ export class AuthController {
     description: 'Token successfully refreshed.',
   })
   async refreshToken(
-    @GetCurrentUserId() userId: number,
+    @GetCurrentUserId() userId: string,
     @GetCurrentTokens() token: any,
     @Res() res: Response,
   ) {

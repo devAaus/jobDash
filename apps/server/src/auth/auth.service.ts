@@ -102,7 +102,7 @@ export class AuthService {
     });
   }
 
-  async refreshToken(userId: number, rt: string, res: Response) {
+  async refreshToken(userId: string, rt: string, res: Response) {
     const user = await this.prisma.users.findUnique({
       where: { id: userId },
     });
@@ -123,7 +123,7 @@ export class AuthService {
     this.setAuthCookies(res, tokens);
   }
 
-  async updateRefreshTokenHash(userId: number, refreshToken: string) {
+  async updateRefreshTokenHash(userId: string, refreshToken: string) {
     const hash = await this.hashedData(refreshToken);
     await this.prisma.users.update({
       where: { id: userId },
@@ -136,7 +136,7 @@ export class AuthService {
   }
 
   async signToken(
-    userId: number,
+    userId: string,
     email: string,
     role: string,
     username: string
