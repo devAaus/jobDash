@@ -4,17 +4,18 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Req,
   Res,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto, RegisterDto } from './dto';
-import { GetCurrentUser, GetCurrentUserId, Public } from './decorator';
+import { GetCurrentUserId, Public } from './decorator';
 import { RtGuard } from './guard';
 import { Response } from 'express';
+import { GetCurrentTokens } from './decorator/get-current-tokens';
+import { ApiOperation, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
 
+@ApiTags('Auth') // Group routes under 'Auth' in Swagger UI
 @Controller('api/auth')
 export class AuthController {
   constructor(private authService: AuthService) { }
@@ -22,6 +23,12 @@ export class AuthController {
   @Public()
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Sign up a new user' })
+  @ApiBody({ type: RegisterDto })
+  @ApiResponse({
+    status: 201,
+    description: 'User successfully signed up.',
+  })
   async signup(@Body() dto: RegisterDto, @Res() res: Response) {
     return await this.authService.signup(dto, res);
   }
@@ -29,6 +36,12 @@ export class AuthController {
   @Public()
   @Post('signin')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Sign in an existing user' })
+  @ApiBody({ type: AuthDto })
+  @ApiResponse({
+    status: 200,
+    description: 'User successfully signed in.',
+  })
   async signin(@Body() dto: AuthDto, @Res() res: Response) {
     return await this.authService.signin(dto, res);
   }
@@ -36,23 +49,27 @@ export class AuthController {
   @Public()
   @Post('logout')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Log out the current user' })
+  @ApiResponse({
+    status: 200,
+    description: 'User successfully logged out.',
+  })
   async logout(@Res() res: Response) {
     return await this.authService.logout(res);
   }
 
-  @Public()
-  @UseGuards(RtGuard)
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Refresh the user token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Token successfully refreshed.',
+  })
   async refreshToken(
     @GetCurrentUserId() userId: number,
-    @GetCurrentUser('refreshToken') refreshToken: string,
-    @Res() res: Response
+    @GetCurrentTokens() token: any,
+    @Res() res: Response,
   ) {
-    await this.authService.refreshToken(userId, refreshToken, res);
-    return res.send({
-      message: 'Token Refreshed',
-      success: true,
-    });
+    return await this.authService.refreshToken(userId, token.refreshToken, res);
   }
 }

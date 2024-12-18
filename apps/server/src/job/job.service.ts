@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -7,20 +7,40 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class JobService {
   constructor(private readonly prisma: PrismaService) { }
 
-  async create(createJobDto: CreateJobDto & { userId: number }) {
-    const { userId, ...jobData } = createJobDto;
-    return await this.prisma.job.create({
-      data: {
-        ...jobData,
-        user: {
-          connect: { id: userId }
-        }
+  async create(data: CreateJobDto, user: any) {
+
+    // // Check if the user has the 'recruiter' role
+    if (user.role !== 'RECRUITER') {
+      return {
+        message: 'You do not have permission to create a job.',
+        success: false,
       }
+    }
+
+    const newJob = await this.prisma.job.create({
+      data: {
+        ...data,
+        user: {
+          connect: { id: user.sub },
+        },
+      },
     });
+
+    return {
+      message: 'Job created successfully',
+      success: true,
+      job: newJob
+    }
   }
 
   async findAll() {
-    return await this.prisma.job.findMany();
+    const jobs = await this.prisma.job.findMany();
+
+    return {
+      message: 'Jobs found successfully',
+      success: true,
+      jobs
+    }
   }
 
   async findOne(id: number) {

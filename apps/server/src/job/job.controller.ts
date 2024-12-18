@@ -3,7 +3,7 @@ import { JobService } from './job.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { AtGuard } from 'src/auth/guard';
-import { GetCurrentUserId, Public } from 'src/auth/decorator';
+import { GetCurrentUser, Public } from 'src/auth/decorator';
 
 @Controller('api/job')
 export class JobController {
@@ -12,10 +12,10 @@ export class JobController {
   @UseGuards(AtGuard)
   @Post()
   async create(
-    @Body() createJobDto: CreateJobDto,
-    @GetCurrentUserId() userId: number,
+    @Body() data: CreateJobDto,
+    @GetCurrentUser() user: any,
   ) {
-    return this.jobService.create({ ...createJobDto, userId });
+    return this.jobService.create(data, user);
   }
 
   @Public()
@@ -33,7 +33,7 @@ export class JobController {
 
   @UseGuards(AtGuard)
   @Get('/user/jobs')
-  findByUserId(@GetCurrentUserId() userId: number) {
+  findByUserId(@GetCurrentUser() userId: number) {
     return this.jobService.findByUserId(userId);
   }
 

@@ -7,7 +7,6 @@ export const GetCurrentUserId = createParamDecorator(
     const jwtService = new JwtService();
 
     const accessToken = request.cookies?.accessToken;
-    console.log("AccessToken", accessToken);
 
 
     if (!accessToken) {

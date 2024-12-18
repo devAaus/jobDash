@@ -152,7 +152,7 @@ export class AuthService {
 
     const [at, rt] = await Promise.all([
       this.jwt.signAsync(payload, {
-        expiresIn: '15m',
+        expiresIn: '1h',
         secret: secretAT,
       }),
       this.jwt.signAsync(payload, {
@@ -164,11 +164,11 @@ export class AuthService {
     return {
       accessToken: at,
       refreshToken: rt,
-      role,
     };
   }
 
   private setAuthCookies(res: Response, tokens: Tokens) {
+
     res.cookie('accessToken', tokens.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

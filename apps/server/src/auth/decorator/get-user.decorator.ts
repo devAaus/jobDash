@@ -1,12 +1,27 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
-import { JwtPayloadWithRt } from '../types'
+import { JwtService } from '@nestjs/jwt'
 
 export const GetCurrentUser = createParamDecorator(
-  (data: keyof JwtPayloadWithRt | undefined, ctx: ExecutionContext) => {
-    const request: Express.Request = ctx.switchToHttp().getRequest()
-    if (data) {
-      return request.user[data]
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest()
+    const jwtService = new JwtService()
+
+    const accessToken = request.cookies?.accessToken
+
+    if (!accessToken) {
+      throw new Error('Access token not found')
     }
-    return request.user
+
+    try {
+      const payload = jwtService.decode(accessToken)
+
+      if (!payload || !payload.sub) {
+        throw new Error('Invalid access token')
+      }
+
+      return payload
+    } catch (error) {
+      throw new Error('Invalid access token')
+    }
   }
 )
