@@ -7,57 +7,149 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class SelectionService {
   constructor(private readonly prisma: PrismaService) { }
 
-  // async create(data: CreateSelectionDto, userId: string ) {
+  // create a new selection
+  async create(data: CreateSelectionDto, userId: string) {
+    // Step 1: Verify candidate profile exists
+    const candidate = await this.prisma.candidate.findUnique({
+      where: { userId },
+    });
 
-  //   const existingSelection = await this.prisma.selection.findUnique({
-  //     where: {
-  //       userId_jobId: {
-  //         userId,
-  //         jobId,
-  //       },
-  //     },
-  //   });
+    if (!candidate) {
+      throw new HttpException('Candidate profile not found', HttpStatus.NOT_FOUND);
+    }
 
-  //   if (existingSelection) {
-  //     throw new HttpException('Already applied for this job', HttpStatus.CONFLICT);
-  //   }
+    // Step 2: Check if the candidate has already applied for this job
+    const existingSelection = await this.prisma.selection.findUnique({
+      where: {
+        candidateId_jobId: {
+          candidateId: candidate.id,
+          jobId: data.jobId,
+        },
+      },
+    });
 
-  //   return await this.prisma.selection.create({
-  //     data: {
-  //       userId,
-  //       jobId,
-  //       ...selectionData,
-  //     },
-  //   });
-  // }
+    if (existingSelection) {
+      throw new HttpException('Already applied for this job', HttpStatus.CONFLICT);
+    }
 
+    // Step 3: Create the selection entry
+    const newSelection = await this.prisma.selection.create({
+      data: {
+        candidateId: candidate.id,
+        jobId: data.jobId,
+        status: data.status,
+      },
+    });
 
-  async findAll() {
-    return await this.prisma.selection.findMany();
+    return {
+      message: 'Successfully applied for the job',
+      success: true,
+      data: newSelection,
+    }
   }
 
-  async findOne(id: string) {
-    return await this.prisma.selection.findUnique({
+  // get selection by id
+  async findOne(id: string, user: any) {
+    this.isRecruiter(user);
+
+    const selection = await this.prisma.selection.findUnique({
       where: { id },
     });
+
+    if (!selection) {
+      throw new HttpException('Selection not found', HttpStatus.NOT_FOUND);
+    }
+
+    return {
+      message: 'Selection found',
+      success: true,
+      data: selection
+    }
   }
 
-  // async findByUserId(userId: string) {
-  //   return await this.prisma.selection.findMany({
-  //     where: { userId }
-  //   });
-  // }
-
-  // async update(id: string, updateSelectionDto: UpdateSelectionDto) {
-  //   return await this.prisma.selection.update({
-  //     where: { id },
-  //     data: updateSelectionDto,
-  //   });
-  // }
-
-  async remove(id: string) {
-    return await this.prisma.selection.delete({
-      where: { id },
+  // get selection by jobId
+  async findByJobId(jobId: string, user: any) {
+    this.isRecruiter(user);
+    // Step 1: Verify the job exists
+    const job = await this.prisma.job.findUnique({
+      where: { id: jobId },
     });
+
+    if (!job) {
+      throw new HttpException('Job not found', HttpStatus.NOT_FOUND);
+    }
+
+    // Step 2: Fetch selections associated with the job
+    const selection = await this.prisma.selection.findMany({
+      where: { jobId },
+    });
+
+    return {
+      message: 'Selections found',
+      success: true,
+      data: selection
+    }
+  }
+
+
+  // get selection by userId
+  async findByUserId(user: any) {
+    const userId = user.sub;
+
+    if (user.role !== 'CANDIDATE') {
+      return {
+        message: 'Unauthorized',
+        success: false,
+      }
+    }
+
+    // Step 1: Find the candidate profile by userId
+    const candidate = await this.prisma.candidate.findUnique({
+      where: { userId }
+    });
+
+    // Step 2: Fetch selections associated with the candidateId
+    const selection = await this.prisma.selection.findMany({
+      where: { candidateId: candidate.id },
+    });
+
+    return {
+      message: 'Selections found',
+      success: true,
+      data: selection
+    }
+  }
+
+  async update(id: string, data: UpdateSelectionDto, user: any) {
+    this.isRecruiter(user);
+
+    const selection = await this.prisma.selection.findUnique({
+      where: { id },
+    })
+
+    if (!selection) {
+      throw new HttpException('Selection not found', HttpStatus.NOT_FOUND);
+    }
+
+    const updatedSelection = await this.prisma.selection.update({
+      where: { id },
+      data
+    });
+
+    return {
+      message: 'Status updated',
+      success: true,
+      data: updatedSelection
+    }
+  }
+
+  private isRecruiter(user: any) {
+    const recruiter = user.role === 'RECRUITER';
+    if (!recruiter) {
+      return {
+        message: 'Unauthorized',
+        success: false,
+      }
+    }
   }
 }

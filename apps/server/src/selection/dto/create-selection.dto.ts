@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsNumber } from "class-validator";
+import { IsEnum, IsInt, IsNumber, IsString } from "class-validator";
 
 enum SelectionStatus {
     APPLIED = 'APPLIED',
@@ -10,6 +10,6 @@ export class CreateSelectionDto {
     @IsEnum(SelectionStatus)
     status: SelectionStatus
 
-    @IsInt()
-    jobId: number
+    @IsString()
+    jobId: string
 }
