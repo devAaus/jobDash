@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { RecruiterService } from './recruiter.service';
 import { CreateRecruiterDto } from './dto/create-recruiter.dto';
 import { UpdateRecruiterDto } from './dto/update-recruiter.dto';
-import { GetCurrentUserId, Public } from 'src/auth/decorator';
+import { GetCurrentUser, Public } from 'src/auth/decorator';
 import { AtGuard } from 'src/auth/guard';
 
 @Controller('api/recruiter')
@@ -12,8 +12,9 @@ export class RecruiterController {
   @Post()
   async create(
     @Body() createRecruiterDto: CreateRecruiterDto,
-    @GetCurrentUserId() userId: string
+    @GetCurrentUser() user: any
   ) {
+    const userId = user.sub;
     return this.recruiterService.create({ ...createRecruiterDto, userId });
   }
 
@@ -30,7 +31,8 @@ export class RecruiterController {
 
   @UseGuards(AtGuard)
   @Get('/user/profile')
-  findByUserId(@GetCurrentUserId() userId: string) {
+  findByUserId(@GetCurrentUser() user: any) {
+    const userId = user.sub;
     return this.recruiterService.findByUserId(userId);
   }
 

@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto, RegisterDto } from './dto';
-import { GetCurrentUserId, Public } from './decorator';
+import { GetCurrentUser, Public } from './decorator';
 import { RtGuard } from './guard';
 import { Response } from 'express';
 import { GetCurrentTokens } from './decorator/get-current-tokens';
@@ -66,10 +66,11 @@ export class AuthController {
     description: 'Token successfully refreshed.',
   })
   async refreshToken(
-    @GetCurrentUserId() userId: string,
+    @GetCurrentUser() user: any,
     @GetCurrentTokens() token: any,
     @Res() res: Response,
   ) {
+    const userId = user.sub;
     return await this.authService.refreshToken(userId, token.refreshToken, res);
   }
 }

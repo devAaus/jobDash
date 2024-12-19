@@ -48,11 +48,22 @@ export class CandidateService {
 
   // Fetch all candidates
   async findOne(id: string) {
-    return await this.prisma.candidate.findUnique({
-      where: {
-        id
-      }
+    const candidate = await this.prisma.candidate.findUnique({
+      where: { id }
     })
+
+    if (!candidate) {
+      return {
+        message: `Candidate not found.`,
+        success: false,
+      };
+    }
+
+    return {
+      message: `Candidate found.`,
+      success: true,
+      candidate: this.candidateData(candidate),
+    };
   }
 
 

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { CandidateService } from './candidate.service';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { UpdateCandidateDto } from './dto/update-candidate.dto';
-import { GetCurrentUserId, Public } from 'src/auth/decorator';
+import { GetCurrentUser, Public } from 'src/auth/decorator';
 import { AtGuard } from 'src/auth/guard';
 
 @Controller('api/candidate')
@@ -12,8 +12,9 @@ export class CandidateController {
   @Post()
   create(
     @Body() data: CreateCandidateDto,
-    @GetCurrentUserId() userId: string
+    @GetCurrentUser() user: any
   ) {
+    const userId = user.sub;
     return this.candidateService.create(data, userId);
   }
 
@@ -25,16 +26,18 @@ export class CandidateController {
   }
 
   @UseGuards(AtGuard)
-  @Get('/user/profile')
-  userProfile(@GetCurrentUserId() userId: string) {
+  @Get('/profile')
+  userProfile(@GetCurrentUser() user: any) {
+    const userId = user.sub;
     return this.candidateService.userProfile(userId);
   }
 
   @Patch()
   update(
-    @GetCurrentUserId() userId: string,
+    @GetCurrentUser() user: any,
     @Body() updateCandidateDto: UpdateCandidateDto
   ) {
+    const userId = user.sub;
     return this.candidateService.update(userId, updateCandidateDto);
   }
 }
